@@ -18,7 +18,7 @@ module.exports = {
 
     return res.status(200).json({
       status: true,
-      data: "user: " + user,
+      data: {user},
     });
   },
 };
