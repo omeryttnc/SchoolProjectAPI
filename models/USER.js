@@ -21,6 +21,17 @@ module.exports = {
     );
   },
 
+  findUser: (iduser) => {
+    return database
+      .promise()
+      .query(`select * from user where iduser = ${iduser}`)
+      .then((result) => {
+       return result[0]
+      }).catch((err) => {
+        if(err) throw err
+      });
+  },
+
   findAllUser: () => {
     return database
       .promise()
@@ -32,13 +43,10 @@ module.exports = {
       });
   },
   
-  // findAllUser: () => {
-  //   return database
-  //     .promise()
-  //     .query("select * from `schoolproject`.`user`", async (err, result) => {
-  //       if (err) throw err;
-  //       return await result;
-  //     });
-  // },
+  deleteUser:(iduser)=>{
+    database.query(
+      `delete from user where iduser = ${iduser}`
+    )
+  }
 
 };

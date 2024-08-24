@@ -22,5 +22,14 @@ router.get(
     '/alluser',
     UserController.getAllUser
 )
+router.get(
+    '/user',
+    UserController.findUser
+)
+
+router.delete(
+    '/delete',
+    UserController.deleteUser
+)
 
 module.exports =router
