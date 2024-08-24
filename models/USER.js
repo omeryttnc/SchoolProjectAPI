@@ -4,23 +4,29 @@ let database;
 module.exports = {
   initialise: (connection) => {
     database = connection;
-    connection.query(UserModel, (err, result) => {
-      if (err) throw err;
-    });
+   return  database.query(UserModel
+    //   , (err, result) => {
+    //   if (err) throw err;
+    // }
+  );
   },
-  createUser: (user) => {
-    database.execute(
-      `insert into user (email,password) values ( "${user.email}" , "${user.password}")`,
+  createUser:  (user) => {
+ return   database.query(
+      `insert into user (email,password) values ( "${user.email}" , "${user.password}")`
+      ,
       (err, result) => {
         if (err) throw err;
         return result;
       }
     );
   },
-  findAllUser: () => {
-    return database.execute(`select * from user`, (err, result) => {
+  findAllUser:  () => {
+    return  database.query('select * from `schoolproject`.`user`'
+      , async (err, result) => {
       if (err) throw err;
-      return result;
-    });
+      return await result;
+    }
+  
+  );
   },
 };

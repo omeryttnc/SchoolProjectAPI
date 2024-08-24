@@ -14,14 +14,14 @@ module.exports={
         })
         UserModel.createUser(body)
     },
-    getAllUser:async (_,res)=>{
+    getAllUser:  (_,res)=>{
+     const user =  UserModel.findAllUser()
      
-      UserModel.findAllUser().then(user=>{
         return res.status(200).json({
             status:true,
             data: "user: " + user
         });
-      })
+     
        
     }
 }

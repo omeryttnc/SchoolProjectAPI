@@ -1,11 +1,11 @@
-const express =require( "express");
-const mysql =require("mysql2/promise");
+const express = require("express");
+const mysql = require("mysql2");
 //import port from '../config'
 const app = express();
 
 const PORT = process.env.PORT || "3000";
 
-const connection =await mysql.createConnection({
+const connection = mysql.createConnection({
   host: "localhost",
   database: "schoolproject",
   user: "root",
@@ -13,25 +13,23 @@ const connection =await mysql.createConnection({
 });
 
 //routers
-const UserRouters =require ("../users/routers")
-
+const UserRouters = require("../users/routers");
 
 // module
-const UserModule = require("../models/USER")
+const UserModule = require("../models/USER");
 
-app.use(express.json())
+app.use(express.json());
 
-
-app.listen(PORT, () => {
+app.listen(PORT,  () => {
   console.log("server Listening on PORT", PORT);
-  connection.connect((err) => {
+   connection.connect((err) => {
     if (err) throw err;
     console.log("database connected");
   });
 });
 
 // initialise model
-UserModule.initialise(connection)
+UserModule.initialise(connection);
 
 // app.use("/all", (req, res) => {
 //   const sql_query = "select * from user";
@@ -41,5 +39,4 @@ UserModule.initialise(connection)
 //   });
 // });
 
-app.use('/user',UserRouters)
-
+app.use("/user", UserRouters);
