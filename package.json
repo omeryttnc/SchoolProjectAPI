@@ -1,0 +1,26 @@
+{
+  "name": "schoolprojectapi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "docker": "docker build -t myapp .",
+    "rundocker": "docker run --publish 3000:3000 myapp"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "ajv": "^8.16.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.11.0",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.2",
+    "schoolprojectapi": "file:"
+  }
+}
