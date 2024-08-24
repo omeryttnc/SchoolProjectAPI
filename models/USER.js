@@ -4,29 +4,41 @@ let database;
 module.exports = {
   initialise: (connection) => {
     database = connection;
-   return  database.query(UserModel
-    //   , (err, result) => {
-    //   if (err) throw err;
-    // }
-  );
+    return database.query(
+      UserModel
+      //   , (err, result) => {
+      //   if (err) throw err;
+      // }
+    );
   },
-  createUser:  (user) => {
- return   database.query(
-      `insert into user (email,password) values ( "${user.email}" , "${user.password}")`
-      ,
+  createUser: (user) => {
+    return database.query(
+      `insert into user (email,password) values ( "${user.email}" , "${user.password}")`,
       (err, result) => {
         if (err) throw err;
         return result;
       }
     );
   },
-  findAllUser:  () => {
-    return  database.query('select * from `schoolproject`.`user`'
-      , async (err, result) => {
-      if (err) throw err;
-      return await result;
-    }
-  
-  );
+
+  findAllUser: () => {
+    return database
+      .promise()
+      .query("select * from `schoolproject`.`user`")
+      .then((result) => {
+       return result[0]
+      }).catch((err) => {
+        if(err) throw err
+      });
   },
+  
+  // findAllUser: () => {
+  //   return database
+  //     .promise()
+  //     .query("select * from `schoolproject`.`user`", async (err, result) => {
+  //       if (err) throw err;
+  //       return await result;
+  //     });
+  // },
+
 };
