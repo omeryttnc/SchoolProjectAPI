@@ -27,12 +27,4 @@ app.listen(PORT, () => {
 // initialise model
 UserModule.initialise(connection);
 
-// app.use("/all", (req, res) => {
-//   const sql_query = "select * from user";
-//   connection.query(sql_query, (err, result) => {
-//     if (err) throw err;
-//     res.send(result);
-//   });
-// });
-
 app.use("/user", UserRouters);
