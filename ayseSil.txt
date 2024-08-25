@@ -3,7 +3,8 @@
         "host": "localhost",
         "database": "schoolproject",
         "user": "root",
-        "password": "admin"
+        "password": "root",
+        "dialect":"mysql"
       }
 }
 

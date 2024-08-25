@@ -1,4 +1,4 @@
-const UserModel = require("../../models/USER");
+const UserModel = require("../../common/models/USER");
 
 module.exports = {
   register: (req, res) => {

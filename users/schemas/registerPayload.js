@@ -29,7 +29,8 @@ module.exports = {
     'email',
     'password',
     'firstName',
-    'lastName'
+    'lastName',
+    'role'
   ],
   additionalProperties: false
 };
