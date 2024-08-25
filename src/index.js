@@ -1,16 +1,12 @@
 const express = require("express");
 const mysql = require("mysql2");
-//import port from '../config'
+const config = require("../config");
 const app = express();
+const secret = require("../secretdata.json");
 
-const PORT = process.env.PORT || "3000";
+const PORT = process.env.PORT || config.port;
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  database: "schoolproject",
-  user: "root",
-  password: "root",
-});
+const connection = mysql.createConnection(secret.mysql);
 
 //routers
 const UserRouters = require("../users/routers");
@@ -20,9 +16,9 @@ const UserModule = require("../models/USER");
 
 app.use(express.json());
 
-app.listen(PORT,  () => {
+app.listen(PORT, () => {
   console.log("server Listening on PORT", PORT);
-   connection.connect((err) => {
+  connection.connect((err) => {
     if (err) throw err;
     console.log("database connected");
   });
