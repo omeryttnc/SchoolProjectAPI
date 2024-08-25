@@ -1,18 +1,7 @@
-const UserModel = require("../../common/models/USER");
+const UserModel = require("../../common/models/User");
 
 module.exports = {
-  register: (req, res) => {
-    const body = req.body;
-    res.status(200).json({
-      status: true,
-      data: {
-        user: "login",
-        userEmail: body.email,
-        userPassword: body.password,
-      },
-    });
-    UserModel.createUser(body);
-  },
+ 
 
   findUser: async (req, res) => {
     const body = req.body;

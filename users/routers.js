@@ -1,13 +1,6 @@
 const router = require('express').Router()
 const UserController = require('../users/controllers/UserController');
 
-
-
-router.post(
-    '/register',
-    UserController.register
-)
-
 router.get(
     '/alluser',
     UserController.getAllUser
