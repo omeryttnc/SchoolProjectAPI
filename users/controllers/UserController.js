@@ -1,47 +1,128 @@
 const UserModel = require("../../common/models/User");
 
 module.exports = {
- 
+  getUser: (req, res) => {
+    const {
+      user: { userId },
+    } = req;
 
-  findUser: async (req, res) => {
-    const body = req.body;
-
-    const user = await UserModel.findUser(body.iduser);
-    if (user.length == 0) {
-      return res.status(404).json({
-        status:false,
-        ref: "user is not found"
+    UserModel.findUser({ id: userId })
+      .then((user) => {
+        return res.status(200).json({
+          status: true,
+          data: user.toJSON(),
+        });
       })
+      .catch((err) => {
+        return res.status(500).json({
+          status: false,
+          error: err,
+        });
+      });
+  },
+  updateUser: (req, res) => {
+    const {
+      user: { userId },
+      body: payload,
+    } = req;
+
+    // IF the payload does not have any keys,
+    // THEN we can return an error, as nothing can be updated
+    if (!Object.keys(payload).length) {
+      return res.status(400).json({
+        status: false,
+        error: {
+          message: "Body is empty, hence can not update the user.",
+        },
+      });
     }
-    return res.status(202).json({
-      status: true,
-      user: { user },
+
+    UserModel.updateUser({ id: userId }, payload)
+      .then(() => {
+        return UserModel.findUser({ id: userId });
+      })
+      .then((user) => {
+        return res.status(200).json({
+          status: true,
+          data: user.toJSON(),
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          status: false,
+          error: err,
+        });
+      });
+  },
+
+  deleteUser: (req, res) => {
+    const {
+      params: { userId },
+    } = req;
+
+    UserModel.findUser({ id: userId }).then((user) => {
+      if (user) {
+        UserModel.deleteUser({ id: userId })
+          .then((numberOfEntriesDeleted) => {
+            return res.status(200).json({
+              status: true,
+              data: {
+                info: numberOfEntriesDeleted + " user has deleted",
+              },
+            });
+          })
+          .catch((err) => {
+            return res.status(500).json({
+              status: false,
+              error: err,
+            });
+          });
+      }else{
+        return res.status(404).json({
+          status: false,
+          data: "user is not found"
+        })
+      }
     });
   },
 
-  getAllUser: async (_, res) => {
-    const user = await UserModel.findAllUser();
-
-    return res.status(200).json({
-      status: true,
-      data: { user },
-    });
+  getAllUsers: (req, res) => {
+    UserModel.findAllUsers(req.query)
+      .then((users) => {
+        return res.status(200).json({
+          status: true,
+          data: users,
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          status: false,
+          error: err,
+        });
+      });
   },
 
-  deleteUser: async (req, res) => {
-    const iduser = req.body.iduser;
-    const user = await UserModel.findUser(iduser);
-    if (user.length == 0) {
-      return res.status(404).json({
-        status:false,
-        ref: "user is not found"
-      })
-    }
-    UserModel.deleteUser(iduser);
+  changeRole: (req, res) => {
+    const {
+      params: { userId },
+      body: { role },
+    } = req;
 
-    return res.status(200).json({
-      status: true,
-      ref: "user deleted",
-    });
+    UserModel.updateUser({ id: userId }, { role })
+      .then(() => {
+        return UserModel.findUser({ id: userId });
+      })
+      .then((user) => {
+        return res.status(200).json({
+          status: true,
+          data: user.toJSON(),
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          status: false,
+          error: err,
+        });
+      });
   },
 };

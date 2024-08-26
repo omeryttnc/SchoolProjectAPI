@@ -72,7 +72,6 @@ module.exports = {
       .then((user) => {
         // IF user is not found with the given username
         // THEN Return user not found error
-      
         if (!user) {
           return res.status(400).json({
             status: false,
