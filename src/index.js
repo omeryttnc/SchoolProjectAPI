@@ -5,6 +5,7 @@ const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
 const secret = require("../secretdata.json");
+const cookieParser= require('cookie-parser')
 const { Sequelize } = require("sequelize");
 
 const PORT = process.env.PORT || config.port;
@@ -19,6 +20,7 @@ const UserModule = require("../common/models/User");
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser()); // cookie lere eklemek icin
 
 // MySQL bağlantısını kur
 const sequelize = new Sequelize(

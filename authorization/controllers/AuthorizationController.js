@@ -66,7 +66,7 @@ module.exports = {
   },
 
   login: (req, res) => {
-    const { username, password,role } = req.body;
+    const { username, password, role } = req.body;
 
     UserModel.findUser({ username })
       .then((user) => {
@@ -96,29 +96,35 @@ module.exports = {
 
         // IF Provided user does not match with the one stored in the DB
         // THEN Return mismatch error
-        if(user.role !== role){
+        if (user.role !== role) {
           return res.status(400).json({
             status: false,
-            error:{
-              message: "user role not correct"
-            }
-          })
+            error: {
+              message: "user role not correct",
+            },
+          });
         }
 
         // Generating an AccessToken for the user, which will be
         // required in every subsequent request.
         const accessToken = generateAccessToken(user.username, user.id);
+        res.cookie("token", accessToken, {
 
+          httpOnly:true,
+          // secure:true,
+          //maxAge:100000,
+          // signed:true
+        });
         return res.status(200).json({
           status: true,
           data: {
             user: {
-              id:user.id,
-              username:user.username,
-              firstName:user.firstName,
-              lastName:user.lastName,
-              email:user.email,
-              role:user.role
+              id: user.id,
+              username: user.username,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+              role: user.role,
             },
             token: accessToken,
           },
