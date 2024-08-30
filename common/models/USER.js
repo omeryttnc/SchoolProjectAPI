@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const { roles } = require("../../config");
+const { sql } = require("@sequelize/core");
 
 const UserModel = {
   id: {
@@ -21,26 +22,25 @@ const UserModel = {
     type: DataTypes.STRING,
     allowNull: false,
   },
- 
+
   role: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: roles.USER
+    defaultValue: roles.USER,
   },
   firstName: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   lastName: {
     type: DataTypes.STRING,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 };
 
 module.exports = {
   initialise: (sequelize) => {
-    this.model = sequelize.define("user", UserModel);
-   
+    this.model = sequelize.define("admin", UserModel);
   },
   createUser: (user) => {
     return this.model.create(user);
@@ -60,13 +60,41 @@ module.exports = {
 
   findAllUsers: (query) => {
     return this.model.findAll({
-      where: query
+      where: query,
     });
   },
 
   deleteUser: (query) => {
     return this.model.destroy({
-      where: query
+      where: query,
     });
+  },
+
+  moveUser: async (query, updatedValue) => {
+  
+    if (updatedValue.role == roles.TEACHER) {
+      const result= this.model.sequelize.query(
+        `insert into teachers (username,email,password,role,firstName,lastName,createdAt,updatedAt) select username,email,password,role,firstName,lastName,createdAt,updatedAt from admins where id = ${query.id}`
+      )
+      console.log("result : " + await result);
+      // .then(()=>{
+      //   this.model.sequelize.close()
+      // });
+      return await  this.model.sequelize.query(
+        `insert into teachers (username,email,password,role,firstName,lastName,createdAt,updatedAt) select username,email,password,role,firstName,lastName,createdAt,updatedAt from admins where id = ${query.id}`
+      )
+    }
+    //  else if (updatedValue.role == roles.STUDENT) {
+    //   return this.model.sequelize.query(
+    //     `insert into students (username,email,password,role,firstName,lastName,createdAt,updatedAt) select username,email,password,role,firstName,lastName,createdAt,updatedAt from admins where id = ${query.id}`
+    //   ).finally(()=>{
+
+    //     this.model.sequelize.close()
+    //   });
+    // }
+  },
+  
+  closeSequelize:()=>{
+
   }
 };

@@ -6,49 +6,46 @@ const SchemaValidationMiddleware = require("../common/middlewares/SchemaValidati
 const CheckPermissionMiddleware = require("../common/middlewares/CheckPermission");
 
 // Controller Imports
-const UserController = require("../users/controllers/UserController");
+const TeacherController = require("../teacher/controllers/TeacherController");
+const AuthorizationController = require("../authorization/controllers/AuthorizationController");
 
 // JSON Schema Imports for payload verification
-const updateUserPayload = require("./schemas/updateUserPayload");
-const changeRolePayload = require("./schemas/changeRolePayload");
+const createTacherPayload = require('./schemas/createTeacherPayload')
+const updateTeacherPayload = require("./schemas/updateTeacherPayload");
 
 const { roles } = require("../config");
 
-router.get("/", [isAuthenticatedMiddleware.check], UserController.getUser);
+router.post(
+  "/create",
+  [SchemaValidationMiddleware.verify(createTacherPayload)],
+  AuthorizationController.register
+);
+
+router.get(
+  "/",
+  [isAuthenticatedMiddleware.check],
+  TeacherController.getTeacher
+);
 
 router.patch(
   "/",
   [
     isAuthenticatedMiddleware.check,
-    SchemaValidationMiddleware.verify(updateUserPayload),
+    SchemaValidationMiddleware.verify(updateTeacherPayload),
   ],
-  UserController.updateUser
+  TeacherController.updateTeacher
 );
 
 router.get(
   "/all",
   [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  UserController.getAllUsers
-);
-
-router.patch(
-  "/change-role/:userId",
-  [
-    isAuthenticatedMiddleware.check,
-    CheckPermissionMiddleware.has(roles.ADMIN),
-    SchemaValidationMiddleware.verify(changeRolePayload),
-  ],
-  UserController.changeRole
+  TeacherController.getAllTeachers
 );
 
 router.delete(
-  "/delete-user/:userId",
+  "/delete-user/:teacherId",
   [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  UserController.deleteUser
+  TeacherController.deleteTeacher
 );
 
-router.patch(
-  '/approve/:userId',
- UserController.approveUser
-)
 module.exports = router;

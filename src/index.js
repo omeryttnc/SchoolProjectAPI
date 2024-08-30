@@ -13,9 +13,11 @@ const PORT = process.env.PORT || config.port;
 //routers
 const AuthorizationRoutes = require("../authorization/routers");
 const UserRouters = require("../users/routers");
+const TeacherRouters = require("../teacher/routers")
 
 // module
 const UserModule = require("../common/models/User");
+const TeacherModule= require("../common/models/TEACHER")
 
 app.use(morgan("tiny"));
 app.use(cors());
@@ -35,14 +37,16 @@ const sequelize = new Sequelize(
 
 // initialise model
 UserModule.initialise(sequelize);
+TeacherModule.initialise(sequelize)
 
 sequelize
   .sync()
   .then(() => {
     console.log("Sequelize Initialised!!");
 
-    app.use("/user", UserRouters);
-    app.use("/", AuthorizationRoutes);
+    app.use("/api/user", UserRouters);
+    app.use("/api/", AuthorizationRoutes);
+    app.use("/api/teacher",TeacherRouters);
 
     app.listen(PORT, () => {
       console.log("server Listening on PORT", PORT);

@@ -1,12 +1,13 @@
-const UserModel = require("../../common/models/User");
+const TeacherModel = require("../../common/models/TEACHER");
 
 module.exports = {
-  getUser: (req, res) => {
+
+  getTeacher: (req, res) => {
     const {
-      user: { userId },
+      user: { teacherId },
     } = req;
 
-    UserModel.findUser({ id: userId })
+    TeacherModel.findTeacher({ id: teacherId })
       .then((user) => {
         return res.status(200).json({
           status: true,
@@ -20,7 +21,7 @@ module.exports = {
         });
       });
   },
-  updateUser: (req, res) => {
+  updateTeacher: (req, res) => {
     const {
       user: { userId },
       body: payload,
@@ -37,9 +38,9 @@ module.exports = {
       });
     }
 
-    UserModel.updateUser({ id: userId }, payload)
+    TeacherModel.updateTeacher({ id: userId }, payload)
       .then(() => {
-        return UserModel.findUser({ id: userId });
+        return TeacherModel.findTeacher({ id: userId });
       })
       .then((user) => {
         return res.status(200).json({
@@ -55,14 +56,14 @@ module.exports = {
       });
   },
 
-  deleteUser: (req, res) => {
+  deleteTeacher: (req, res) => {
     const {
       params: { userId },
     } = req;
 
-    UserModel.findUser({ id: userId }).then((user) => {
+    TeacherModel.findTeacher({ id: userId }).then((user) => {
       if (user) {
-        UserModel.deleteUser({ id: userId })
+        TeacherModel.deleteTeacher({ id: userId })
           .then((numberOfEntriesDeleted) => {
             return res.status(200).json({
               status: true,
@@ -86,8 +87,8 @@ module.exports = {
     });
   },
 
-  getAllUsers: (req, res) => {
-    UserModel.findAllUsers(req.query)
+  getAllTeachers: (req, res) => {
+    TeacherModel.findAllTeachers(req.query)
       .then((users) => {
         return res.status(200).json({
           status: true,
@@ -100,41 +101,5 @@ module.exports = {
           error: err,
         });
       });
-  },
-
-  changeRole: (req, res) => {
-    const {
-      params: { userId },
-      body: { role },
-    } = req;
-
-    UserModel.updateUser({ id: userId }, { role })
-      .then(() => {
-        return UserModel.findUser({ id: userId });
-      })
-      .then((user) => {
-        return res.status(200).json({
-          status: true,
-          data: user.toJSON(),
-        });
-      })
-      .catch((err) => {
-        return res.status(500).json({
-          status: false,
-          error: err,
-        });
-      });
-  },
-
-  approveUser: async (req, res) => {
-    const {
-      params: { userId },
-      body: { role },
-    } = req;
-   await UserModel.moveUser({ id: userId }, { role });
-    //  .then(()=>{
-
-    //    UserModel.closeSequelize()
-    //  });
   },
 };
