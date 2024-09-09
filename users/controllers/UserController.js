@@ -126,15 +126,17 @@ module.exports = {
       });
   },
 
-  approveUser: async (req, res) => {
+  approveUser: (req, res) => {
     const {
       params: { userId },
       body: { role },
     } = req;
-   await UserModel.moveUser({ id: userId }, { role });
-    //  .then(()=>{
 
-    //    UserModel.closeSequelize()
-    //  });
+    UserModel.moveUser({ id: userId }, { role })
+    .then(() => {
+      return res.status(200).json({
+        status: true
+      });
+    });
   },
 };

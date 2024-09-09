@@ -49,6 +49,7 @@ router.delete(
 
 router.patch(
   '/approve/:userId',
+  [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
  UserController.approveUser
 )
 module.exports = router;
