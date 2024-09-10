@@ -6,7 +6,7 @@ const SchemaValidationMiddleware = require("../common/middlewares/SchemaValidati
 const CheckPermissionMiddleware = require("../common/middlewares/CheckPermission");
 
 // Controller Imports
-const UserController = require("../users/controllers/UserController");
+const AdminController = require("../admin/controllers/AdminController");
 
 // JSON Schema Imports for payload verification
 const updateUserPayload = require("./schemas/updateUserPayload");
@@ -14,7 +14,7 @@ const changeRolePayload = require("./schemas/changeRolePayload");
 
 const { roles } = require("../config");
 
-router.get("/", [isAuthenticatedMiddleware.check], UserController.getUser);
+router.get("/", [isAuthenticatedMiddleware.check], AdminController.getUser);
 
 router.patch(
   "/",
@@ -22,13 +22,13 @@ router.patch(
     isAuthenticatedMiddleware.check,
     SchemaValidationMiddleware.verify(updateUserPayload),
   ],
-  UserController.updateUser
+  AdminController.updateUser
 );
 
 router.get(
   "/all",
   [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  UserController.getAllUsers
+  AdminController.getAllUsers
 );
 
 router.patch(
@@ -38,18 +38,18 @@ router.patch(
     CheckPermissionMiddleware.has(roles.ADMIN),
     SchemaValidationMiddleware.verify(changeRolePayload),
   ],
-  UserController.changeRole
+  AdminController.changeRole
 );
 
 router.delete(
   "/delete-user/:userId",
   [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  UserController.deleteUser
+  AdminController.deleteUser
 );
 
 router.patch(
   '/approve/:userId',
   [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
- UserController.approveUser
+ AdminController.approveUser
 )
 module.exports = router;

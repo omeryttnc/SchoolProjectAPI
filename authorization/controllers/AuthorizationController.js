@@ -1,7 +1,9 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
-const UserModel = require("../../common/models/User");
+const AdminModel = require("../../common/models/ADMIN");
+const TeacherModel = require("../../common/models/TEACHER");
+const StudentModel = require("../../common/models/STUDENT");
 
 const { roles, jwtSecret, jwtExpirationInSeconds } = require("../../config");
 
@@ -36,39 +38,92 @@ module.exports = {
 
     let encryptedPassword = encryptPassword(payload.password);
     let role = payload.role;
-
+    
     if (!role) {
-      role = roles.USER;
+      role = roles.STUDENT;
     }
+ 
+    // for Admin user
+    if ((role == roles.ADMIN)) {
+     AdminModel.createUser (
+        Object.assign(payload, { password: encryptedPassword, role })
+      )
+        .then((user) => {
+          // Generating an AccessToken for the user, which will be
+          // required in every subsequent request.
+          const accessToken = generateAccessToken(payload.username, user.id);
 
-    UserModel.createUser(
-      Object.assign(payload, { password: encryptedPassword, role })
-    )
-      .then((user) => {
-        // Generating an AccessToken for the user, which will be
-        // required in every subsequent request.
-        const accessToken = generateAccessToken(payload.username, user.id);
+          return res.status(200).json({
+            status: true,
+            data: {
+              user: user.toJSON(),
+              token: accessToken,
+            },
+          });
+        })
+        .catch((err) => {
+          return res.status(500).json({
+            status: false,
+            error: err,
+          });
+        });
+    } 
+    // for Teacher
+    else if ((role == roles.TEACHER)) {
+      TeacherModel.createTeacher(
+        Object.assign(payload, { password: encryptedPassword, role })
+      )
+        .then((user) => {
+          // Generating an AccessToken for the user, which will be
+          // required in every subsequent request.
+          const accessToken = generateAccessToken(payload.username, user.id);
 
-        return res.status(200).json({
-          status: true,
-          data: {
-            user: user.toJSON(),
-            token: accessToken,
-          },
+          return res.status(200).json({
+            status: true,
+            data: {
+              user: user.toJSON(),
+              token: accessToken,
+            },
+          });
+        })
+        .catch((err) => {
+          return res.status(500).json({
+            status: false,
+            error: err,
+          });
         });
-      })
-      .catch((err) => {
-        return res.status(500).json({
-          status: false,
-          error: err,
+    } 
+    // for Student
+    else {
+     StudentModel.createStudent(
+        Object.assign(payload, { password: encryptedPassword, role })
+      )
+        .then((user) => {
+          // Generating an AccessToken for the user, which will be
+          // required in every subsequent request.
+          const accessToken = generateAccessToken(payload.username, user.id);
+
+          return res.status(200).json({
+            status: true,
+            data: {
+              user: user.toJSON(),
+              token: accessToken,
+            },
+          });
+        })
+        .catch((err) => {
+          return res.status(500).json({
+            status: false,
+            error: err,
+          });
         });
-      });
+    }
   },
 
   login: (req, res) => {
     const { username, password, role } = req.body;
 
-    UserModel.findUser({ username })
+    AdminModel.findUser({ username })
       .then((user) => {
         // IF user is not found with the given username
         // THEN Return user not found error
@@ -109,8 +164,7 @@ module.exports = {
         // required in every subsequent request.
         const accessToken = generateAccessToken(user.username, user.id);
         res.cookie("token", accessToken, {
-
-          httpOnly:true,
+          httpOnly: true,
           // secure:true,
           //maxAge:100000,
           // signed:true

@@ -6,47 +6,48 @@ const SchemaValidationMiddleware = require("../common/middlewares/SchemaValidati
 const CheckPermissionMiddleware = require("../common/middlewares/CheckPermission");
 
 // Controller Imports
-const TeacherController = require("../teacher/controllers/TeacherController");
+const StudentController = require("../student/controllers/StudentController");
 const AuthorizationController = require("../authorization/controllers/AuthorizationController");
 
 // JSON Schema Imports for payload verification
-const createTacherPayload = require('./schemas/createTeacherPayload')
-const updateTeacherPayload = require("./schemas/updateTeacherPayload");
+const createSstudentPayload = require('./schemas/createStudentPayload')
+const updateStudentPayload = require("./schemas/updateStudentPayload");
 
 const { roles } = require("../config");
 
 router.post(
   "/create",
-  [SchemaValidationMiddleware.verify(createTacherPayload)],
+  [SchemaValidationMiddleware.verify(createSstudentPayload)],
   AuthorizationController.register
 );
 
 router.get(
   "/all",
   [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  TeacherController.getAllTeachers
+  StudentController.getAllStudents
 );
 
 router.get(
-  "/:teacherId",
+  "/:studentId",
   [isAuthenticatedMiddleware.check],
-  TeacherController.getTeacher
+  StudentController.getStudent
 );
 
 router.patch(
-  "/update",
+  "/",
   [
     isAuthenticatedMiddleware.check,
-    SchemaValidationMiddleware.verify(updateTeacherPayload),
+    SchemaValidationMiddleware.verify(updateStudentPayload),
   ],
-  TeacherController.updateTeacher
+  StudentController.updateStudent
 );
 
 
+
 router.delete(
-  "/delete-user/:teacherId",
+  "/delete-user/:studentId",
   [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  TeacherController.deleteTeacher
+  StudentController.deleteStudent
 );
 
 module.exports = router;

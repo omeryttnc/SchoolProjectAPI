@@ -1,13 +1,12 @@
-const TeacherModel = require("../../common/models/TEACHER");
+const AdminModel = require("../../common/models/ADMIN");
 
 module.exports = {
-
-  getTeacher: (req, res) => {
+  getUser: (req, res) => {
     const {
-      params: { teacherId },
+      user: { userId },
     } = req;
 
-    TeacherModel.findTeacher({ id: teacherId })
+    AdminModel.findUser({ id: userId })
       .then((user) => {
         return res.status(200).json({
           status: true,
@@ -21,7 +20,7 @@ module.exports = {
         });
       });
   },
-  updateTeacher: (req, res) => {
+  updateUser: (req, res) => {
     const {
       user: { userId },
       body: payload,
@@ -38,9 +37,9 @@ module.exports = {
       });
     }
 
-    TeacherModel.updateTeacher({ id: userId }, payload)
+    AdminModel.updateUser({ id: userId }, payload)
       .then(() => {
-        return TeacherModel.findTeacher({ id: userId });
+        return AdminModel.findUser({ id: userId });
       })
       .then((user) => {
         return res.status(200).json({
@@ -56,14 +55,14 @@ module.exports = {
       });
   },
 
-  deleteTeacher: (req, res) => {
+  deleteUser: (req, res) => {
     const {
       params: { userId },
     } = req;
 
-    TeacherModel.findTeacher({ id: userId }).then((user) => {
+    AdminModel.findUser({ id: userId }).then((user) => {
       if (user) {
-        TeacherModel.deleteTeacher({ id: userId })
+        AdminModel.deleteUser({ id: userId })
           .then((numberOfEntriesDeleted) => {
             return res.status(200).json({
               status: true,
@@ -87,9 +86,8 @@ module.exports = {
     });
   },
 
-  getAllTeachers: (req, res) => {
-    console.log("all teacher is called");
-    TeacherModel.findAllTeachers(req.query)
+  getAllUsers: (req, res) => {
+    AdminModel.findAllUsers(req.query)
       .then((users) => {
         return res.status(200).json({
           status: true,
@@ -102,5 +100,43 @@ module.exports = {
           error: err,
         });
       });
+  },
+
+  changeRole: (req, res) => {
+    const {
+      params: { userId },
+      body: { role },
+    } = req;
+
+    AdminModel.updateUser({ id: userId }, { role })
+      .then(() => {
+        return AdminModel.findUser({ id: userId });
+      })
+      .then((user) => {
+        return res.status(200).json({
+          status: true,
+          data: user.toJSON(),
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          status: false,
+          error: err,
+        });
+      });
+  },
+
+  approveUser: (req, res) => {
+    const {
+      params: { userId },
+      body: { role },
+    } = req;
+
+    AdminModel.moveUser({ id: userId }, { role })
+    .then(() => {
+      return res.status(200).json({
+        status: true
+      });
+    });
   },
 };

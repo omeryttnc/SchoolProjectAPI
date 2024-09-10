@@ -1,6 +1,5 @@
 const { DataTypes, QueryTypes } = require("sequelize");
 const { roles } = require("../../config");
-const { sql } = require("@sequelize/core");
 
 const UserModel = {
   id: {
@@ -73,20 +72,16 @@ module.exports = {
   moveUser: (
     query, updatedValue
   ) => {
-    console.log("Executing query with id:");
-
       if (updatedValue.role == roles.TEACHER) {
         return this.model.sequelize.query(
           `insert into teachers (username,email,password,role,firstName,lastName,createdAt,updatedAt) select username,email,password,role,firstName,lastName,createdAt,updatedAt from admins where id = 5`
         )
-        
       }
        else if (updatedValue.role == roles.STUDENT) {
         return this.model.sequelize.query(
           `insert into students (username,email,password,role,firstName,lastName,createdAt,updatedAt) select username,email,password,role,firstName,lastName,createdAt,updatedAt from admins where id = ${query.id}`
         )
         .finally(()=>{
-
           this.model.sequelize.close()
         });
       }

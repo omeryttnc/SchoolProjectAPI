@@ -4,14 +4,8 @@ module.exports = {
   jwtSecret: "!!ZfFe3##/Sif0re@!!123",
   jwtExpirationInSeconds: 60 * 60, // 1 hour
   roles: {
-    USER: "user",
     ADMIN: "admin",
     STUDENT: "student",
     TEACHER: "teacher",
-  },
-  productPriceUnits: {
-    DOLLAR: "dollar",
-    EURO: "euro",
-    INR: "inr",
   },
 };
