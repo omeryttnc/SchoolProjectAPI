@@ -33,7 +33,12 @@ const STUDENTModel = {
   lastName: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
+  approved: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  },
 };
 
 module.exports = {

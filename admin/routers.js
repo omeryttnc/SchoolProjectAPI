@@ -52,4 +52,10 @@ router.patch(
   [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
  AdminController.approveUser
 )
+router.patch(
+  '/deactivate/:userId',
+  [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
+ AdminController.deactiveUser
+)
+
 module.exports = router;

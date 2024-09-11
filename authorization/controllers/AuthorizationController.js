@@ -35,17 +35,16 @@ const encryptPassword = (password) => {
 module.exports = {
   register: (req, res) => {
     const payload = req.body;
-
     let encryptedPassword = encryptPassword(payload.password);
     let role = payload.role;
-    
+
     if (!role) {
       role = roles.STUDENT;
     }
- 
+
     // for Admin user
-    if ((role == roles.ADMIN)) {
-     AdminModel.createUser (
+    if (role == roles.ADMIN) {
+      AdminModel.createUser(
         Object.assign(payload, { password: encryptedPassword, role })
       )
         .then((user) => {
@@ -67,9 +66,9 @@ module.exports = {
             error: err,
           });
         });
-    } 
+    }
     // for Teacher
-    else if ((role == roles.TEACHER)) {
+    else if (role == roles.TEACHER) {
       TeacherModel.createTeacher(
         Object.assign(payload, { password: encryptedPassword, role })
       )
@@ -92,10 +91,10 @@ module.exports = {
             error: err,
           });
         });
-    } 
+    }
     // for Student
     else {
-     StudentModel.createStudent(
+      StudentModel.createStudent(
         Object.assign(payload, { password: encryptedPassword, role })
       )
         .then((user) => {
@@ -160,6 +159,16 @@ module.exports = {
           });
         }
 
+        // user must be approved
+        if (!user.approved) {
+          return res.status(400).json({
+            status: false,
+            data: {
+              message: "user should be approved",
+            },
+          });
+        }
+
         // Generating an AccessToken for the user, which will be
         // required in every subsequent request.
         const accessToken = generateAccessToken(user.username, user.id);
@@ -169,6 +178,7 @@ module.exports = {
           //maxAge:100000,
           // signed:true
         });
+
         return res.status(200).json({
           status: true,
           data: {
@@ -179,6 +189,7 @@ module.exports = {
               lastName: user.lastName,
               email: user.email,
               role: user.role,
+              isApproved: user.approved,
             },
             token: accessToken,
           },

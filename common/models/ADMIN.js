@@ -35,6 +35,11 @@ const UserModel = {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  approved: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  },
 };
 
 module.exports = {
@@ -69,23 +74,54 @@ module.exports = {
     });
   },
 
-  moveUser: (
-    query, updatedValue
-  ) => {
-      if (updatedValue.role == roles.TEACHER) {
-        return this.model.sequelize.query(
-          `insert into teachers (username,email,password,role,firstName,lastName,createdAt,updatedAt) select username,email,password,role,firstName,lastName,createdAt,updatedAt from admins where id = 5`
+  approveUser: (query, updatedValue) => {
+    if (updatedValue.role == roles.TEACHER) {
+      return this.model.sequelize.query(
+        `update teachers set approved = 1 where id = ${query.id} `
+      );
+    }
+     else if (updatedValue.role == roles.STUDENT) {
+      return this.model.sequelize
+        .query(
+          `update students set approved = 1 where id = ${query.id} `
         )
-      }
-       else if (updatedValue.role == roles.STUDENT) {
-        return this.model.sequelize.query(
-          `insert into students (username,email,password,role,firstName,lastName,createdAt,updatedAt) select username,email,password,role,firstName,lastName,createdAt,updatedAt from admins where id = ${query.id}`
-        )
-        .finally(()=>{
-          this.model.sequelize.close()
-        });
-      }
-    },
+        
+    }else{
+      return this.model.sequelize
+        .query()
+    }
+  },
 
-  
+  deactivateUser: (query, updatedValue) => {
+    if (updatedValue.role == roles.TEACHER) {
+      return this.model.sequelize.query(
+        `update teachers set approved = 0 where id = ${query.id} `
+      );
+    }
+     else if (updatedValue.role == roles.STUDENT) {
+      return this.model.sequelize
+        .query(
+          `update students set approved = 0 where id = ${query.id} `
+        )
+    }
+  },
+
+/*
+else if (updatedValue.role == roles.ADMIN) {
+      return this.model.sequelize
+        .query(
+          `update admins set approved = 1 where id = ${query.id} `
+        )   
+    }
+
+    else if (updatedValue.role == roles.ADMIN) {
+      return this.model.sequelize
+        .query(
+          `update admins set approved = 0 where id = ${query.id} `
+        )   
+    }
+
+
+
+*/
 };

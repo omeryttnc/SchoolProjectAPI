@@ -51,5 +51,6 @@ module.exports = {
       req.user = user; // Save the user object for further use
       next();
     });
-  }
+  },
+
 }

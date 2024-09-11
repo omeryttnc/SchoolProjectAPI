@@ -22,6 +22,9 @@ module.exports = {
     ,
     lastName: {
       type: 'string'
+    },
+    approved:{
+      type: 'boolean'
     }
   },
   additionalProperties: false

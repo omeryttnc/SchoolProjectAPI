@@ -1,4 +1,5 @@
 const AdminModel = require("../../common/models/ADMIN");
+const { roles } = require("../../config");
 
 module.exports = {
   getUser: (req, res) => {
@@ -131,12 +132,51 @@ module.exports = {
       params: { userId },
       body: { role },
     } = req;
-
-    AdminModel.moveUser({ id: userId }, { role })
-    .then(() => {
-      return res.status(200).json({
-        status: true
+    if (role == roles.ADMIN) {
+      return res.status(401).json({
+        status: false,
+        message: "You need to be super admin to approve admin user",
       });
-    });
+    }
+
+    AdminModel.approveUser({ id: userId }, { role })
+      .then(() => {
+        return res.status(200).json({
+          status: true,
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          status: false,
+          error: err,
+        });
+      });
+  },
+
+  deactiveUser: (req, res) => {
+    const {
+      params: { userId },
+      body: { role },
+    } = req;
+
+    if (role == roles.ADMIN) {
+      return res.status(401).json({
+        status: false,
+        message: "You need to be super admin to deactivate admin user",
+      });
+    }
+
+    AdminModel.deactivateUser({ id: userId }, { role })
+      .then(() => {
+        return res.status(200).json({
+          status: true,
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          status: false,
+          error: err,
+        });
+      });
   },
 };
