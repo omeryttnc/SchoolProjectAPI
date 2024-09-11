@@ -57,5 +57,5 @@ router.patch(
   [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
  AdminController.deactiveUser
 )
-
+// TODO: super admin create
 module.exports = router;
