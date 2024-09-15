@@ -1,61 +1,68 @@
-const router = require("express").Router();
+import express from "express";
+const router = express.Router();
 
 // Middleware Imports
-const isAuthenticatedMiddleware = require("../common/middlewares/IsAuthenticatedMiddleware");
-const SchemaValidationMiddleware = require("../common/middlewares/SchemaValidationMiddleware");
-const CheckPermissionMiddleware = require("../common/middlewares/CheckPermission");
+import IsAuthenticatedMiddleware from "../common/middlewares/IsAuthenticatedMiddleware.js";
+import SchemaValidationMiddleware from "../common/middlewares/SchemaValidationMiddleware.js";
+import CheckPermissionMiddleware from "../common/middlewares/CheckPermission.js";
 
 // Controller Imports
-const AdminController = require("../admin/controllers/AdminController");
+import  AdminController  from "../admin/controllers/AdminController.js";
 
 // JSON Schema Imports for payload verification
-const updateUserPayload = require("./schemas/updateUserPayload");
-const changeRolePayload = require("./schemas/changeRolePayload");
+import updateUserPayload from "./schemas/updateUserPayload.js";
+import changeRolePayload from "./schemas/changeRolePayload.js";
 
-const { roles } = require("../config");
+import  {roles}  from "../config.js";
 
-router.get("/", [isAuthenticatedMiddleware.check], AdminController.getUser);
+const adminController =  new AdminController()
+
+const isAuthenticatedMiddleware = new IsAuthenticatedMiddleware()
+const schemaValidationMiddleware= new SchemaValidationMiddleware()
+const checkPermissionMiddleware = new CheckPermissionMiddleware()
+
+router.get("/", [isAuthenticatedMiddleware.check], adminController.getUser);
 
 router.patch(
   "/",
   [
     isAuthenticatedMiddleware.check,
-    SchemaValidationMiddleware.verify(updateUserPayload),
+    schemaValidationMiddleware.verify(updateUserPayload),
   ],
-  AdminController.updateUser
+  adminController.updateUser
 );
 
 router.get(
   "/all",
-  [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  AdminController.getAllUsers
+  [isAuthenticatedMiddleware.check, checkPermissionMiddleware.has(roles.ADMIN)],
+  adminController.getAllUsers
 );
 
 router.patch(
   "/change-role/:userId",
   [
     isAuthenticatedMiddleware.check,
-    CheckPermissionMiddleware.has(roles.ADMIN),
-    SchemaValidationMiddleware.verify(changeRolePayload),
+    checkPermissionMiddleware.has(roles.ADMIN),
+    schemaValidationMiddleware.verify(changeRolePayload),
   ],
-  AdminController.changeRole
+  adminController.changeRole
 );
 
 router.delete(
   "/delete-user/:userId",
-  [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  AdminController.deleteUser
+  [isAuthenticatedMiddleware.check, checkPermissionMiddleware.has(roles.ADMIN)],
+  adminController.deleteUser
 );
 
 router.patch(
   '/approve/:userId',
-  [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
- AdminController.approveUser
+  [isAuthenticatedMiddleware.check, checkPermissionMiddleware.has(roles.ADMIN)],
+ adminController.approveUser
 )
 router.patch(
   '/deactivate/:userId',
-  [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
- AdminController.deactiveUser
+  [isAuthenticatedMiddleware.check, checkPermissionMiddleware.has(roles.ADMIN)],
+ adminController.deactiveUser
 )
 // TODO: super admin create
-module.exports = router;
+export default router;

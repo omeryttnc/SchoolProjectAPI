@@ -1,6 +1,6 @@
-const { roles } = require('../../config');
+import  {roles,config}  from '../../config.js';
 
-module.exports = {
+const registerPayload = {
   type: 'object',
   properties: {
     username: {
@@ -34,3 +34,5 @@ module.exports = {
   ],
   additionalProperties: false
 };
+
+export default registerPayload;

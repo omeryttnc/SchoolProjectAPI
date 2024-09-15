@@ -1,13 +1,18 @@
-const TeacherModel = require("../../common/models/TEACHER");
+import TeacherModel from "../../common/models/TEACHER.js";
 
-module.exports = {
+import {connection} from "../../src/connection.js"
+// MySQL bağlantısını kur
+const sequelize = connection
+const teacherModel= new TeacherModel(sequelize)
 
-  getTeacher: (req, res) => {
+class TeacherController {
+
+  getTeacher (req, res)  {
     const {
       params: { teacherId },
     } = req;
 
-    TeacherModel.findTeacher({ id: teacherId })
+    teacherModel.findTeacher({ id: teacherId })
       .then((user) => {
         return res.status(200).json({
           status: true,
@@ -20,8 +25,8 @@ module.exports = {
           error: err,
         });
       });
-  },
-  updateTeacher: (req, res) => {
+  }
+  updateTeacher (req, res)  {
     const {
       user: { userId },
       body: payload,
@@ -38,9 +43,9 @@ module.exports = {
       });
     }
 
-    TeacherModel.updateTeacher({ id: userId }, payload)
+    teacherModel.updateTeacher({ id: userId }, payload)
       .then(() => {
-        return TeacherModel.findTeacher({ id: userId });
+        return teacherModel.findTeacher({ id: userId });
       })
       .then((user) => {
         return res.status(200).json({
@@ -54,16 +59,16 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 
-  deleteTeacher: (req, res) => {
+  deleteTeacher (req, res)  {
     const {
       params: { userId },
     } = req;
 
-    TeacherModel.findTeacher({ id: userId }).then((user) => {
+    teacherModel.findTeacher({ id: userId }).then((user) => {
       if (user) {
-        TeacherModel.deleteTeacher({ id: userId })
+        teacherModel.deleteTeacher({ id: userId })
           .then((numberOfEntriesDeleted) => {
             return res.status(200).json({
               status: true,
@@ -85,11 +90,10 @@ module.exports = {
         });
       }
     });
-  },
+  }
 
-  getAllTeachers: (req, res) => {
-    console.log("all teacher is called");
-    TeacherModel.findAllTeachers(req.query)
+  getAllTeachers (req, res)  {
+    teacherModel.findAllTeachers(req.query)
       .then((users) => {
         return res.status(200).json({
           status: true,
@@ -102,5 +106,7 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 };
+
+export default TeacherController

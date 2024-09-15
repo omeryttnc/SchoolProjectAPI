@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const { roles } = require("../../config");
+import { DataTypes } from "sequelize";
+import {roles}  from "../../config.js";
 
 const TeacherModel = {
   id: {
@@ -41,36 +41,39 @@ const TeacherModel = {
   },
 };
 
-module.exports = {
-  initialise: (sequelize) => {
+class TEACHER {
+  constructor (sequelize)  {
     this.model = sequelize.define("teacher", TeacherModel);
    
-  },
-  createTeacher: (user) => {
+  }
+  createTeacher (user)  {
     return this.model.create(user);
-  },
+  }
 
-  findTeacher: (query) => {
+  findTeacher (query)  {
     return this.model.findOne({
       where: query,
     });
-  },
+  }
 
-  updateTeacher: (query, updatedValue) => {
+  updateTeacher (query, updatedValue)  {
     return this.model.update(updatedValue, {
       where: query,
     });
-  },
+  }
 
-  findAllTeachers: (query) => {
+  findAllTeachers (query)  {
     return this.model.findAll({
       where: query
     });
-  },
+  }
 
-  deleteTeacher: (query) => {
+  deleteTeacher (query)  {
     return this.model.destroy({
       where: query
     });
   }
 };
+
+
+export default TEACHER

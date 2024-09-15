@@ -1,25 +1,23 @@
-const express = require("express");
-const mysql = require("mysql2");
-const config = require("../config");
+import express from "express";
+import {config} from"../config.js";
 export const app = express();
-const cors = require("cors");
-const morgan = require("morgan");
-const secret = require("../secretdata.json");
-const cookieParser= require('cookie-parser')
-const { Sequelize } = require("sequelize");
+import cors from"cors";
+import morgan from"morgan";
+import cookieParser from 'cookie-parser'
+import {connection} from "./connection.js"
 
 const PORT = process.env.PORT || config.port;
 
 //routers
-const AuthorizationRoutes = require("../authorization/routers");
-const AdminRouters = require("../admin/routers");
-const TeacherRouters = require("../teacher/routers")
-const StudentRouters = require("../student/routers")
+import AuthorizationRoutes from"../authorization/routers.js";
+import AdminRouters from "../admin/routers.js";
+import TeacherRouters from "../teacher/routers.js"
+import StudentRouters from "../student/routers.js"
 
 // module
-const AdminModel = require("../common/models/ADMIN");
-const TeacherModule= require("../common/models/TEACHER")
-const StudentModule= require("../common/models/STUDENT")
+import AdminModule from "../common/models/ADMIN.js";
+import TeacherModule from "../common/models/TEACHER.js"
+import StudentModule from "../common/models/STUDENT.js"
 
 app.use(morgan("tiny"));
 app.use(cors());
@@ -27,27 +25,12 @@ app.use(express.json());
 app.use(cookieParser()); // cookie lere eklemek icin
 
 // MySQL bağlantısını kur
-const sequelize = new Sequelize(
-  secret.mysql.database,
-  secret.mysql.user,
-  secret.mysql.password,
-  {
-    host: secret.mysql.host,
-    dialect: secret.mysql.dialect,
-
-    pool: {
-       max: 5,
-       min: 0,
-       acquire: 30000,
-       idle: 10000
-    },
-  }
-);
+const sequelize = connection
 
 // initialise model
-AdminModel.initialise(sequelize);
-TeacherModule.initialise(sequelize)
-StudentModule.initialise(sequelize)
+new AdminModule(sequelize);
+new TeacherModule(sequelize)
+new StudentModule(sequelize)
 
 sequelize
   .sync()

@@ -1,7 +1,7 @@
-const { DataTypes, QueryTypes } = require("sequelize");
-const { roles } = require("../../config");
+import { DataTypes } from "sequelize";
+import {roles}  from "../../config.js";
 
-const UserModel = {
+const AdminModel = {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -42,71 +42,65 @@ const UserModel = {
   },
 };
 
-module.exports = {
-  initialise: (sequelize) => {
-    this.model = sequelize.define("admin", UserModel);
-  },
-  createUser: (user) => {
+ class ADMIN {
+  constructor(sequelize) {
+    this.model =  sequelize.define("admin", AdminModel);
+  }
+   createUser(user) {
     return this.model.create(user);
-  },
+  }
 
-  findUser: (query) => {
+  findUser(query) {
     return this.model.findOne({
       where: query,
     });
-  },
+  }
 
-  updateUser: (query, updatedValue) => {
+  updateUser(query, updatedValue) {
     return this.model.update(updatedValue, {
       where: query,
     });
-  },
+  }
 
-  findAllUsers: (query) => {
+  findAllUsers(query) {
     return this.model.findAll({
       where: query,
     });
-  },
+  }
 
-  deleteUser: (query) => {
+  deleteUser(query) {
     return this.model.destroy({
       where: query,
     });
-  },
+  }
 
-  approveUser: (query, updatedValue) => {
+  approveUser(query, updatedValue) {
     if (updatedValue.role == roles.TEACHER) {
       return this.model.sequelize.query(
         `update teachers set approved = 1 where id = ${query.id} `
       );
+    } else if (updatedValue.role == roles.STUDENT) {
+      return this.model.sequelize.query(
+        `update students set approved = 1 where id = ${query.id} `
+      );
+    } else {
+      return this.model.sequelize.query();
     }
-     else if (updatedValue.role == roles.STUDENT) {
-      return this.model.sequelize
-        .query(
-          `update students set approved = 1 where id = ${query.id} `
-        )
-        
-    }else{
-      return this.model.sequelize
-        .query()
-    }
-  },
+  }
 
-  deactivateUser: (query, updatedValue) => {
+  deactivateUser(query, updatedValue) {
     if (updatedValue.role == roles.TEACHER) {
       return this.model.sequelize.query(
         `update teachers set approved = 0 where id = ${query.id} `
       );
+    } else if (updatedValue.role == roles.STUDENT) {
+      return this.model.sequelize.query(
+        `update students set approved = 0 where id = ${query.id} `
+      );
     }
-     else if (updatedValue.role == roles.STUDENT) {
-      return this.model.sequelize
-        .query(
-          `update students set approved = 0 where id = ${query.id} `
-        )
-    }
-  },
-
-/*
+  }
+  // TODO
+  /*
 else if (updatedValue.role == roles.ADMIN) {
       return this.model.sequelize
         .query(
@@ -124,4 +118,5 @@ else if (updatedValue.role == roles.ADMIN) {
 
 
 */
-};
+}
+export default ADMIN;

@@ -1,8 +1,8 @@
-const Ajv = require('ajv').default,
-  AJV_OPTS = {allErrors: true};
+import ajv from "ajv";
+const Ajv = ajv.default,
+  AJV_OPTS = { allErrors: true };
 
-module.exports = {
-
+class SchemaValidationMiddleware {
   /**
    * @description Compiles the schema provided in argument and validates the data for the
    * compiled schema, and returns errors if any
@@ -11,9 +11,10 @@ module.exports = {
    *
    * @returns {Function} - Express request handler
    */
-  verify: (schema) => {
+
+   verify(schema) {
     if (!schema) {
-      throw new Error('Schema not provided');
+      throw new Error("Schema not provided");
     }
 
     return (req, res, next) => {
@@ -29,9 +30,11 @@ module.exports = {
       return res.send({
         status: false,
         error: {
-          message: `Invalid Payload: ${ajv.errorsText(validate.errors)}`
-        }
+          message: `Invalid Payload: ${ajv.errorsText(validate.errors)}`,
+        },
       });
-    }
+    };
   }
-};
+}
+
+export default SchemaValidationMiddleware;

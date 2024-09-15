@@ -1,13 +1,19 @@
-const AdminModel = require("../../common/models/ADMIN");
-const { roles } = require("../../config");
+import AdminModel from "../../common/models/ADMIN.js";
+import { roles } from "../../config.js";
 
-module.exports = {
-  getUser: (req, res) => {
+
+import {connection} from "../../src/connection.js"
+// MySQL bağlantısını kur
+const sequelize = connection
+const adminModel= new AdminModel(sequelize)
+
+class AdminController {
+  getUser (req, res) {
     const {
       user: { userId },
     } = req;
 
-    AdminModel.findUser({ id: userId })
+    adminModel.findUser({ id: userId })
       .then((user) => {
         return res.status(200).json({
           status: true,
@@ -20,8 +26,8 @@ module.exports = {
           error: err,
         });
       });
-  },
-  updateUser: (req, res) => {
+  }
+  updateUser (req, res) {
     const {
       user: { userId },
       body: payload,
@@ -38,9 +44,9 @@ module.exports = {
       });
     }
 
-    AdminModel.updateUser({ id: userId }, payload)
+    adminModel.updateUser({ id: userId }, payload)
       .then(() => {
-        return AdminModel.findUser({ id: userId });
+        return adminModel.findUser({ id: userId });
       })
       .then((user) => {
         return res.status(200).json({
@@ -54,16 +60,16 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 
-  deleteUser: (req, res) => {
+  deleteUser(req, res)  {
     const {
       params: { userId },
     } = req;
 
-    AdminModel.findUser({ id: userId }).then((user) => {
+    adminModel.findUser({ id: userId }).then((user) => {
       if (user) {
-        AdminModel.deleteUser({ id: userId })
+        adminModel.deleteUser({ id: userId })
           .then((numberOfEntriesDeleted) => {
             return res.status(200).json({
               status: true,
@@ -85,10 +91,10 @@ module.exports = {
         });
       }
     });
-  },
+  }
 
-  getAllUsers: (req, res) => {
-    AdminModel.findAllUsers(req.query)
+  getAllUsers (req, res)  {
+    adminModel.findAllUsers(req.query)
       .then((users) => {
         return res.status(200).json({
           status: true,
@@ -101,17 +107,17 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 
-  changeRole: (req, res) => {
+  changeRole (req, res)  {
     const {
       params: { userId },
       body: { role },
     } = req;
 
-    AdminModel.updateUser({ id: userId }, { role })
+    adminModel.updateUser({ id: userId }, { role })
       .then(() => {
-        return AdminModel.findUser({ id: userId });
+        return adminModel.findUser({ id: userId });
       })
       .then((user) => {
         return res.status(200).json({
@@ -125,9 +131,9 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 
-  approveUser: (req, res) => {
+  approveUser (req, res)  {
     const {
       params: { userId },
       body: { role },
@@ -139,7 +145,7 @@ module.exports = {
       });
     }
 
-    AdminModel.approveUser({ id: userId }, { role })
+    adminModel.approveUser({ id: userId }, { role })
       .then(() => {
         return res.status(200).json({
           status: true,
@@ -151,9 +157,9 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 
-  deactiveUser: (req, res) => {
+  deactiveUser (req, res) {
     const {
       params: { userId },
       body: { role },
@@ -166,7 +172,7 @@ module.exports = {
       });
     }
 
-    AdminModel.deactivateUser({ id: userId }, { role })
+    adminModel.deactivateUser({ id: userId }, { role })
       .then(() => {
         return res.status(200).json({
           status: true,
@@ -178,5 +184,7 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 };
+
+export default AdminController

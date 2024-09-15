@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
-const { jwtSecret } = require("../../config");
+import jwt from "jsonwebtoken";
+import  {config}  from "../../config.js";
 
-module.exports = {
-  check: (req, res, next) => {
+class IsAuthenticatedMiddleware {
+  check (req, res, next)  {
     const authHeader = req.headers['authorization'];
 
     // IF no auth headers are provided
@@ -40,7 +40,7 @@ module.exports = {
       })
     }
 
-    jwt.verify(token, jwtSecret, (err, user) => {
+    jwt.verify(token,config. jwtSecret, (err, user) => {
       if (err) {
         return res.status(403).json({
           status: false,
@@ -51,6 +51,8 @@ module.exports = {
       req.user = user; // Save the user object for further use
       next();
     });
-  },
+  }
 
 }
+
+export default IsAuthenticatedMiddleware;

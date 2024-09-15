@@ -1,12 +1,17 @@
-const StudentModel = require("../../common/models/STUDENT");
+import StudentModel from "../../common/models/STUDENT.js";
 
-module.exports = {
+import {connection} from "../../src/connection.js"
+// MySQL bağlantısını kur
+const sequelize = connection
+const studentModel= new StudentModel(sequelize)
 
-  getStudent: (req, res) => {
+class StudentController {
+
+  getStudent (req, res)  {
     const {
       params: { studentId },
     } = req;
-    StudentModel.findStudent({ id: studentId })
+    studentModel.findStudent({ id: studentId })
       .then((user) => {
         return res.status(200).json({
           status: true,
@@ -19,8 +24,8 @@ module.exports = {
           error: err,
         });
       });
-  },
-  updateStudent: (req, res) => {
+  }
+  updateStudent (req, res) {
     const {
       user: { userId },
       body: payload,
@@ -37,9 +42,9 @@ module.exports = {
       });
     }
 
-    StudentModel.updateStudent({ id: userId }, payload)
+    studentModel.updateStudent({ id: userId }, payload)
       .then(() => {
-        return StudentModel.findStudent({ id: userId });
+        return studentModel.findStudent({ id: userId });
       })
       .then((user) => {
         return res.status(200).json({
@@ -53,16 +58,16 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 
-  deleteStudent: (req, res) => {
+  deleteStudent (req, res)  {
     const {
       params: { userId },
     } = req;
 
-    StudentModel.findStudent({ id: userId }).then((user) => {
+    studentModel.findStudent({ id: userId }).then((user) => {
       if (user) {
-        StudentModel.deleteStudent({ id: userId })
+        studentModel.deleteStudent({ id: userId })
           .then((numberOfEntriesDeleted) => {
             return res.status(200).json({
               status: true,
@@ -84,11 +89,10 @@ module.exports = {
         });
       }
     });
-  },
+  }
 
-  getAllStudents: (req, res) => {
-    console.log("all student");
-    StudentModel.findAllStudents(req.query)
+  getAllStudents (req, res) {
+    studentModel.findAllStudents(req.query)
       .then((users) => {
         return res.status(200).json({
           status: true,
@@ -101,5 +105,7 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 };
+
+export default StudentController

@@ -1,4 +1,4 @@
-module.exports = {
+const updateUserPayload = {
   type: 'object',
   properties: {
     username: {
@@ -29,3 +29,5 @@ module.exports = {
   },
   additionalProperties: false
 };
+
+export default updateUserPayload

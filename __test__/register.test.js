@@ -1,6 +1,6 @@
 describe("register", () => {
   const supertest = require("supertest");
-  const { app } = require("../src/index");
+  const { app } = require("../src/index.js");
   describe("post signup route", () => {
     describe("given positive scenario", () => {
       it("should return 200", async () => {

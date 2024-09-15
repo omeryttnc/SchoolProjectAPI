@@ -1,53 +1,61 @@
-const router = require("express").Router();
+import express from "express";
+const router = express.Router();
 
 // Middleware Imports
-const isAuthenticatedMiddleware = require("../common/middlewares/IsAuthenticatedMiddleware");
-const SchemaValidationMiddleware = require("../common/middlewares/SchemaValidationMiddleware");
-const CheckPermissionMiddleware = require("../common/middlewares/CheckPermission");
+import IsAuthenticatedMiddleware from "../common/middlewares/IsAuthenticatedMiddleware.js" ;
+import SchemaValidationMiddleware from "../common/middlewares/SchemaValidationMiddleware.js" ;
+import CheckPermissionMiddleware from "../common/middlewares/CheckPermission.js" ;
 
 // Controller Imports
-const StudentController = require("../student/controllers/StudentController");
-const AuthorizationController = require("../authorization/controllers/AuthorizationController");
+import StudentController from "../student/controllers/StudentController.js" ;
+import AuthorizationController from "../authorization/controllers/AuthorizationController.js" ;
 
 // JSON Schema Imports for payload verification
-const createSstudentPayload = require('./schemas/createStudentPayload')
-const updateStudentPayload = require("./schemas/updateStudentPayload");
+import {createSstudentPayload} from './schemas/createStudentPayload.js' 
+import {updateStudentPayload} from "./schemas/updateStudentPayload.js" ;
 
-const { roles } = require("../config");
+import { roles } from "../config.js" ;
 
+
+const studentController =  new StudentController()
+const authorizationController = new AuthorizationController()
+
+const isAuthenticatedMiddleware = new IsAuthenticatedMiddleware()
+const schemaValidationMiddleware= new SchemaValidationMiddleware()
+const checkPermissionMiddleware = new CheckPermissionMiddleware()
 router.post(
   "/create",
-  [SchemaValidationMiddleware.verify(createSstudentPayload)],
-  AuthorizationController.register
+  [schemaValidationMiddleware.verify(createSstudentPayload)],
+  authorizationController.register
 );
 
 router.get(
   "/all",
-  [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  StudentController.getAllStudents
+  [isAuthenticatedMiddleware.check, checkPermissionMiddleware.has(roles.ADMIN)],
+  studentController.getAllStudents
 );
 
 router.get(
   "/:studentId",
   [isAuthenticatedMiddleware.check],
-  StudentController.getStudent
+  studentController.getStudent
 );
 
 router.patch(
   "/",
   [
     isAuthenticatedMiddleware.check,
-    SchemaValidationMiddleware.verify(updateStudentPayload),
+    schemaValidationMiddleware.verify(updateStudentPayload),
   ],
-  StudentController.updateStudent
+  studentController.updateStudent
 );
 
 
 
 router.delete(
   "/delete-user/:studentId",
-  [isAuthenticatedMiddleware.check, CheckPermissionMiddleware.has(roles.ADMIN)],
-  StudentController.deleteStudent
+  [isAuthenticatedMiddleware.check, checkPermissionMiddleware.has(roles.ADMIN)],
+  studentController.deleteStudent
 );
 
-module.exports = router;
+export default router;

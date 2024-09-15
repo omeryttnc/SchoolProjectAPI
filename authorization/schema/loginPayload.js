@@ -1,4 +1,4 @@
-module.exports = {
+const loginPayload = {
   type: 'object',
   properties: {
     username: {
@@ -18,3 +18,5 @@ module.exports = {
   ],
   additionalProperties: false
 };
+
+export default loginPayload;

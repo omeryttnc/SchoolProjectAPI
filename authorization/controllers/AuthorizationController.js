@@ -1,11 +1,18 @@
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
-const AdminModel = require("../../common/models/ADMIN");
-const TeacherModel = require("../../common/models/TEACHER");
-const StudentModel = require("../../common/models/STUDENT");
+import AdminModel from "../../common/models/ADMIN.js";
+import TeacherModel from "../../common/models/TEACHER.js";
+import StudentModel from "../../common/models/STUDENT.js";
 
-const { roles, jwtSecret, jwtExpirationInSeconds } = require("../../config");
+import { roles, config } from "../../config.js";
+
+import {connection} from "../../src/connection.js"
+// MySQL bağlantısını kur
+const sequelize = connection
+const adminModel= new AdminModel(sequelize)
+const teacherModel= new TeacherModel(sequelize)
+const studentModel= new StudentModel(sequelize)
 
 // Generates an Access Token using username and userId for the user's authentication
 const generateAccessToken = (username, userId) => {
@@ -14,9 +21,9 @@ const generateAccessToken = (username, userId) => {
       userId,
       username,
     },
-    jwtSecret,
+    config.jwtSecret,
     {
-      expiresIn: jwtExpirationInSeconds,
+      expiresIn: config.jwtExpirationInSeconds,
     }
   );
 };
@@ -32,8 +39,8 @@ const encryptPassword = (password) => {
   return hash.digest("hex");
 };
 
-module.exports = {
-  register: (req, res) => {
+class AuthorizationController {
+   register (req, res)  {
     const payload = req.body;
     let encryptedPassword = encryptPassword(payload.password);
     let role = payload.role;
@@ -44,7 +51,7 @@ module.exports = {
 
     // for Admin user
     if (role == roles.ADMIN) {
-      AdminModel.createUser(
+      adminModel.createUser(
         Object.assign(payload, { password: encryptedPassword, role })
       )
         .then((user) => {
@@ -69,7 +76,7 @@ module.exports = {
     }
     // for Teacher
     else if (role == roles.TEACHER) {
-      TeacherModel.createTeacher(
+      teacherModel.createTeacher(
         Object.assign(payload, { password: encryptedPassword, role })
       )
         .then((user) => {
@@ -94,7 +101,7 @@ module.exports = {
     }
     // for Student
     else {
-      StudentModel.createStudent(
+      studentModel.createStudent(
         Object.assign(payload, { password: encryptedPassword, role })
       )
         .then((user) => {
@@ -117,12 +124,13 @@ module.exports = {
           });
         });
     }
-  },
+  }
 
-  login: (req, res) => {
+  login (req, res)  {
+
     const { username, password, role } = req.body;
 
-    AdminModel.findUser({ username })
+    adminModel.findUser({ username })
       .then((user) => {
         // IF user is not found with the given username
         // THEN Return user not found error
@@ -201,5 +209,7 @@ module.exports = {
           error: err,
         });
       });
-  },
+  }
 };
+
+export default AuthorizationController;

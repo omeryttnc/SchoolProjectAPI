@@ -1,6 +1,6 @@
-const { roles } = require('../../config');
+import { roles } from '../../config.js' ;
 
-module.exports = {
+const changeRole =  {
   type: 'object',
   properties: {
     role: {
@@ -10,3 +10,5 @@ module.exports = {
   },
   additionalProperties: false
 };
+
+export default changeRole

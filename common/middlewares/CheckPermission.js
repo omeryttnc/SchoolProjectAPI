@@ -1,12 +1,18 @@
-const UserModel = require("../models/ADMIN");
+import AdminModel from "../models/ADMIN.js" ;
 
-module.exports = {
-  has: (role) => {
+import {connection} from "../../src/connection.js"
+// MySQL bağlantısını kur
+const sequelize = connection
+const adminModel= new AdminModel(sequelize)
+
+
+class CheckPermission {
+  has (role)  {
     return (req, res, next) => {
       const {
         user: { userId },
       } = req;
-      UserModel.findUser({ id: userId }).then((user) => {
+      adminModel.findUser({ id: userId }).then((user) => {
         if (!user) {
           return res.status(403).json({
             status: false,
@@ -23,5 +29,8 @@ module.exports = {
         next();
       });
     };
-  },
+  }
 };
+
+
+export default CheckPermission;

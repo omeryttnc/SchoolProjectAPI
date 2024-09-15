@@ -1,6 +1,6 @@
-const { roles } = require("../../config");
+import { roles } from "../../config.js";
 
-module.exports = {
+export const createSstudentPayload={
   type: "object",
   properties: {
     username: {

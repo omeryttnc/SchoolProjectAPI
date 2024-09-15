@@ -1,4 +1,4 @@
-module.exports = {
+export const updateStudentPayload  = {
   type: 'object',
   properties: {
     username: {
