@@ -1,7 +1,7 @@
 const express = require("express");
 const mysql = require("mysql2");
 const config = require("../config");
-const app = express();
+export const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
 const secret = require("../secretdata.json");
