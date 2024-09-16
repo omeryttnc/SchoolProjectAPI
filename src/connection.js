@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import secret from"../secretdata.json" assert {type:"json"};
+import secret from"../secretdata.json" with {type:"json"}; // TODO with not working in DEV to work change with to assert
 
 export const connection = new Sequelize(
     secret.mysql.database,
