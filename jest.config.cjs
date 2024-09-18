@@ -11,5 +11,5 @@ module.exports = {
   moduleNameMapper: {
     "^mysql2$": "<rootDir>/__mocks__/mysql2.js",
   },
-  // clearMocks: true // Uncomment if you want to automatically clear mocks between tests
+  clearMocks: true // Uncomment if you want to automatically clear mocks between tests
 };

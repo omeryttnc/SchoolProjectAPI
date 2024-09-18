@@ -1,13 +1,13 @@
 import { Sequelize } from "sequelize";
-import secret from"../secretdata.json" with {type:"json"}; // TODO with not working in DEV to work change with to assert
+import {secretdata} from"../secretdata.js" 
 
 export const connection = new Sequelize(
-    secret.mysql.database,
-    secret.mysql.user,
-    secret.mysql.password,
+  secretdata.mysql.database,
+  secretdata.mysql.user,
+  secretdata.mysql.password,
     {
-      host: secret.mysql.host,
-      dialect: secret.mysql.dialect,
+      host: secretdata.mysql.host,
+      dialect: secretdata.mysql.dialect,
   
       pool: {
          max: 5,
@@ -17,3 +17,15 @@ export const connection = new Sequelize(
       },
     }
   );
+
+  export function executeQuery(query, params) {
+    return new Promise((resolve, reject) => {
+      connection.query(query, params, (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  }
