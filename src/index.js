@@ -32,12 +32,13 @@ sequelize
   .sync()
   .then(() => {
     console.log("Sequelize Initialised!!");
-  //  if (!app.listen) { // if it is not listening we will create server
-   
-      const server = app.listen(PORT, () => {
+    if (!app.listen) {
+      // if it is not listening we will create server
+
+      app.listen(PORT, () => {
         console.log("server Listening on PORT", PORT);
       });
-   // }
+    }
   })
   .catch((err) => {
     console.error("Sequelize Initialisation threw an error:", err);
