@@ -11,14 +11,7 @@ import StudentModule from "../common/models/STUDENT.js";
 
 const app = createServer();
 
-// if (server.listen) {
-//   server .close(() => {
-//     console.log("Old server closed.");
-//     startServer();
-//   });
-// } else {
-//   startServer();
-// }
+
 
 // MySQL bağlantısını kur
 const sequelize = connection;
@@ -32,13 +25,13 @@ sequelize
   .sync()
   .then(() => {
     console.log("Sequelize Initialised!!");
-    if (!app.listen) {
+    // if (!app.listen) {
       // if it is not listening we will create server
 
       app.listen(PORT, () => {
         console.log("server Listening on PORT", PORT);
       });
-    }
+    // }
   })
   .catch((err) => {
     console.error("Sequelize Initialisation threw an error:", err);
