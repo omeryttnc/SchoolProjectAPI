@@ -15,7 +15,7 @@ const schemas= new SchemaValidationMiddleware()
 const controller = new AuthorizationController()
 
 router.post(
-  "/signup",
+  "/auth/register",
   [schemas.verify(registerPayload)],
   controller.register
 );
